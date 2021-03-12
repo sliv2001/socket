@@ -14,17 +14,9 @@
 #define	PEER_MAX	50
 #define	BASIC_STRLEN	128
 
-struct	peer{
-	uint32_t s_addr;
-	int online;
-	int csfd;
-};
-
 int	setup_socket();
 
-char*	receive();
-
-int	getNearestPeer();
+int	connect_to_Socket();
 
 int	initialize();
 

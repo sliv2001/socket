@@ -1,9 +1,7 @@
 #include "server.h"
 #include "utils.h"
 
-int 		sfd, csfd;
-struct peer	peers[PEER_MAX + 1];
-/*Здесь возможна ошибка из-за неправильного выделения памяти*/
+int 		sfd, csfd=-1;
 
 int setup_socket(){
 	int res;
@@ -30,48 +28,18 @@ int setup_socket(){
 	return 0;
 }
 
-int getNearestPeer(){
-	for (int i=0; i<PEER_MAX+1; i++){
-		if (!peers[i].online)
-			return i;
-	}
-	finalize(-1, "Too many clients. Disconnecting did not work.");
-}
+int connect_to_Socket(){
 
-char* receive(){
-	const size_t size = sizeof(struct peer);
-	int len = BASIC_STRLEN;
-	char* buff = stralloc(&len);
-	if (len<BASIC_STRLEN||buff==NULL)
-		finalize(-1, "Could not allocate memory");
-
-	while (1){
-		int p = getNearestPeer();
-		csfd = accept(sfd,
-			(struct sockaddr*)&peers[p].s_addr,
-			(socklen_t*)&size);
-		if (csfd<0)
-			finalize(-1, "Could not create client socket");
-		
-	}
 }
 
 int initialize(){
-	for (int i=0; i<PEER_MAX+1; i++){
-		peers[i].s_addr = 0;
-		peers[i].online = 0;
-		peers[i].csfd = -1;
-	}
 	return 0;
 }
 
 void finalize(int res, char* str){
 
 	close(sfd);
-	for (int i = 0; i<PEER_MAX+1; i++){
-		if (peers[i].csfd>=0)
-			close(peers[i].csfd);
-	}
+	close(csfd);
 
 	if (res==0)
 		exit(0);
@@ -82,6 +50,6 @@ void finalize(int res, char* str){
 int main(int argc, char** argv){
 	initialize();
 	sfd = setup_socket();
-	receive();
+	connect_to_Socket();
 	return 0;
 }
