@@ -12,19 +12,20 @@
 #define	SOCKET_PATH	"/tmp/s_connect"
 #define	PORT		32001
 #define	PEER_MAX	50
+#define	BASIC_STRLEN	128
 
-struct peer{
+struct	peer{
 	uint32_t s_addr;
 	int online;
 	int csfd;
 };
 
-int setup_socket();
+int	setup_socket();
 
-int receive();
+char*	receive();
 
-int getNearestPeer();
+int	getNearestPeer();
 
-int initialize();
+int	initialize();
 
-void finalize(int, char*);
+void	finalize(int, char*);

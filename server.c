@@ -1,4 +1,5 @@
 #include "server.h"
+#include "utils.h"
 
 int 		sfd, csfd;
 struct peer	peers[PEER_MAX + 1];
@@ -37,8 +38,13 @@ int getNearestPeer(){
 	finalize(-1, "Too many clients. Disconnecting did not work.");
 }
 
-int receive(){
+char* receive(){
 	const size_t size = sizeof(struct peer);
+	int len = BASIC_STRLEN;
+	char* buff = stralloc(&len);
+	if (len<BASIC_STRLEN||buff==NULL)
+		finalize(-1, "Could not allocate memory");
+
 	while (1){
 		int p = getNearestPeer();
 		csfd = accept(sfd,
