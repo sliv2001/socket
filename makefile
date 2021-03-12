@@ -1,4 +1,4 @@
-primary_source_files = utils.c
+primary_source_files = utils.c server-child.c
 
 all: debug release debug-daemon
 

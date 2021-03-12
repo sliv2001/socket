@@ -20,14 +20,4 @@ int	connect_to_Socket();
 
 int	initialize();
 
-int	receive();
-
-int	getData(char*, int);
-
-int	finalizeChild();
-
-char*	processing(char*);
-
-int	sendMessage(char*);
-
 void	finalize(int, char*);
