@@ -2,6 +2,7 @@
 #include "utils.h"
 
 int 		sfd, csfd=-1;
+struct sockaddr_in peer_addr;
 
 int setup_socket(){
 	int res;
@@ -28,8 +29,27 @@ int setup_socket(){
 	return 0;
 }
 
-int connect_to_Socket(){
+int receive(){
+	return 0;
+}
 
+int connect_to_Socket(){
+	int counter=0;
+	int size=sizeof(struct sockaddr_in);
+	while (1){
+		csfd = accept(sfd, (struct sockaddr*)&peer_addr, (socklen_t*)&size);
+		if (csfd<0&&counter>=MAX_ATTEMPTS)
+			finalize(-1, "Multiple errors in acception");
+		if (csfd<0){
+			warn("Error in acceleration #%d", counter);
+			++counter;
+			continue;
+		}
+		counter = 0;
+
+		if (fork()==0)
+			receive();
+	}
 }
 
 int initialize(){

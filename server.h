@@ -13,11 +13,13 @@
 #define	PORT		32001
 #define	PEER_MAX	50
 #define	BASIC_STRLEN	128
-
+#define MAX_ATTEMPTS	10
 int	setup_socket();
 
 int	connect_to_Socket();
 
 int	initialize();
+
+int	receive();
 
 void	finalize(int, char*);
