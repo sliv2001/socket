@@ -29,8 +29,10 @@ int setup_socket(){
 		finalize(res, "Error in setting up for listening");
 	return 0;
 }
+
 int connect_to_Socket(){
 	int counter=0;
+	pid_t pid;
 	int size=sizeof(struct sockaddr_in);
 	while (1){
 		csfd = accept(sfd, (struct sockaddr*)&peer_addr, (socklen_t*)&size);
@@ -43,8 +45,12 @@ int connect_to_Socket(){
 		}
 		counter = 0;
 
-		if (fork()==0)
+		if ((pid=fork())==0)
 			receive();
+		if (pid<0)
+			finalize(-1, "Could not make a fork()");
+		if (pid>0)
+			close(csfd);
 	}
 }
 

@@ -37,3 +37,14 @@ void daemonize(){
 		err(-1, "Daemonization failure");
 	chdir("/");
 }
+
+int getCommand(char* inp){
+	int i=0;
+	for (i; i<strlen(inp); i++){
+		if (isspace(inp[i])){
+			inp[i]=0;
+			exit(0);
+		}
+	}
+	return -1;
+}
