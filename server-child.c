@@ -1,11 +1,17 @@
 #include "server-child.h"
 
+/*TODO make some free() */
+
 extern int sfd, csfd;
 extern struct sockaddr_in peer_addr;
 
 int finalizeChild(){
         close(csfd);
         exit(0);
+}
+
+int bashInit(){
+	return 0;
 }
 
 int getData(char* buf, int len){
@@ -21,7 +27,9 @@ int receive(){
         char* buf=stralloc(&len);
         char* res=stralloc(&len);
         if (buf==NULL||len==0||res==NULL)
-                finalize(getpid(), "Could not allocate memory");
+                finalizeChild();
+	if (bashInit()<0)
+		finalizeChild();
         while (1){
                 getData(buf, len);
                 while (buf[len-1]!=0){
@@ -35,8 +43,34 @@ int receive(){
         return 0;
 }
 
+int Print(char* inp){
+	char* data = &inp[strlen(inp)];
+	if (printf("%s", data)<0)
+		return -1;
+	else
+		return 0;
+}
+
+char* Bash(char* inp){
+	return NULL;
+}
+
 char* processing(char* inp){
-        return NULL;
+	int len=BASIC_STRLEN;
+	char* res = stralloc(&len);
+	if (res==NULL||len==0)
+		finalizeChild();
+	if (getCommand(inp)<0)
+		return NULL;
+
+	if (!strcmp(inp, "bash"))
+		res = Bash(inp);
+	if (!strcmp(inp, "print"))
+		Print(inp);
+	if (!strcmp(inp, "exit"))
+		finalizeChild();
+
+        return res;
 }
 
 int sendMessage(char* inp){
