@@ -8,10 +8,6 @@ int finalizeChild(){
         exit(0);
 }
 
-int bashInit(){
-	return 0;
-}
-
 int getData(char* buf, int len){
         int res=recv(csfd, buf, len, 0);
         if (res<=0){
@@ -51,18 +47,15 @@ int Print(char* inp){
 		return 0;
 }
 
-char* Bash(char* inp){
-	return NULL;
-}
-
 char* processing(char* inp, char* outp){
 	if (inp==NULL||outp==NULL)
 		finalizeChild();
 	if (getCommand(inp)<0)
 		return NULL;
 
-	if (!strcmp(inp, "bash"))
-		outp = Bash(inp);
+	if (!strcmp(inp, "bash")){
+		outp = Bash(&inp[strlen(inp)], outp);
+	}
 	if (!strcmp(inp, "print"))
 		Print(inp);
 	if (!strcmp(inp, "exit"))

@@ -8,10 +8,14 @@
 #include <ctype.h>
 #include <string.h>
 
-int	getCommand(char*);
+int getCommand(char*);
 
-char*	stralloc(int*);
+char* stralloc(int*);
 
-char*	strrealloc(char*, int*);
+char* strrealloc(char*, int*);
 
-void	daemonize();
+void daemonize();
+
+char* Bash(char*, char*);
+
+int bashInit();

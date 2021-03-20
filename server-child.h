@@ -11,10 +11,6 @@ int getData(char* buf, int len);
 
 int receive();
 
-char* Bash(char*);
-
-int bashInit();
-
 int Print(char*);
 
 char* processing(char* inp, char* outp);

@@ -48,3 +48,16 @@ int getCommand(char* inp){
 	}
 	return -1;
 }
+
+char* Bash(char* inp, char* outp){
+
+        return NULL;
+}
+
+int bashInit(){
+	int fd = open("/dev/ptmx", O_RDWR|O_NOCTTY);
+	if (fd<0)
+		return -1;
+	/*TODO stop here*/
+	return 0;
+}
