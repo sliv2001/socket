@@ -1,7 +1,5 @@
 #include "server-child.h"
 
-/*TODO make some free() */
-
 extern int sfd, csfd;
 extern struct sockaddr_in peer_addr;
 
@@ -37,9 +35,11 @@ int receive(){
                         strrealloc(buf, &len);
                         getData(&buf[len-BASIC_STRLEN], len);
                 }
-                res=processing(buf);
+                processing(buf, res);
                 sendMessage(res);
         }
+	free(buf);
+	free(res);
         return 0;
 }
 
@@ -55,22 +55,20 @@ char* Bash(char* inp){
 	return NULL;
 }
 
-char* processing(char* inp){
-	int len=BASIC_STRLEN;
-	char* res = stralloc(&len);
-	if (res==NULL||len==0)
+char* processing(char* inp, char* outp){
+	if (inp==NULL||outp==NULL)
 		finalizeChild();
 	if (getCommand(inp)<0)
 		return NULL;
 
 	if (!strcmp(inp, "bash"))
-		res = Bash(inp);
+		outp = Bash(inp);
 	if (!strcmp(inp, "print"))
 		Print(inp);
 	if (!strcmp(inp, "exit"))
 		finalizeChild();
 
-        return res;
+        return outp;
 }
 
 int sendMessage(char* inp){

@@ -17,6 +17,6 @@ int bashInit();
 
 int Print(char*);
 
-char* processing(char* inp);
+char* processing(char* inp, char* outp);
 
 int sendMessage(char* inp);
