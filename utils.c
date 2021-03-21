@@ -1,5 +1,7 @@
 #include "utils.h"
 
+/*TODO Set up appropriate logging*/
+
 char* stralloc(int* len){
 	char* res=(char*)malloc(*len);
 	if (res==NULL){
@@ -55,9 +57,30 @@ char* Bash(char* inp, char* outp){
 }
 
 int bashInit(){
+	char* slave_path;
 	int fd = open("/dev/ptmx", O_RDWR|O_NOCTTY);
+	int slave_fd;
+	pid_t pid;
 	if (fd<0)
 		return -1;
-	/*TODO stop here*/
+	if (grantpt(fd)<0)
+		return -1;
+	if (unlockpt(fd)<0)
+		return -1;
+	slave_path = ptsname(fd);
+	if (slave_path == NULL)
+		return -1;
+	if ((slave_fd=open(slave_path, O_RDWR))<0)
+		return -1;
+	if ((pid = fork())<0)
+		return -1;
+	if (pid>0){
+		dup2(slave_fd, STDIN_FILENO);
+		dup2(slave_fd, STDOUT_FILENO);
+		dup2(slave_fd, STDERR_FILENO);
+		execl(BASH_PATH, BASH_PATH, (char*)0);
+	}
+	if (pid == 0)
+		return fd;
 	return 0;
 }

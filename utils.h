@@ -1,5 +1,7 @@
 #pragma once
 
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
 #include <err.h>
 #include <sys/types.h>
@@ -7,6 +9,9 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <string.h>
+#include <fcntl.h>
+
+#define BASH_PATH "/bin/bash"
 
 int getCommand(char*);
 
