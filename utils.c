@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "server.h"
 
 /*TODO Set up appropriate logging*/
 
@@ -18,7 +19,7 @@ char* strrealloc(char* str, int* len){
 		return str;
 	res=(char*)realloc(str, *len);
 	if (res==NULL){
-		len=0;
+		*len = 0;
 		return str;
 	}
 	res[sizeof(str)]=0;
@@ -51,9 +52,41 @@ int getCommand(char* inp){
 	return -1;
 }
 
-char* Bash(char* inp, char* outp){
+int flush(int fd){
+	
+	return 0;
+}
 
-        return NULL;
+int Bash(int fd, char* inp, char* outp, int* outp_len){
+	int exceed=1, result;
+	int buf_len;
+	inp[strlen(inp)]='\n';
+	inp[strlen(inp)+1]='\0';
+	if (write(fd, inp, strlen(inp))<0)
+		return -1;
+	for (*outp_len; *outp_len<=MAX_STRLEN; *outp_len+=BASIC_STRLEN){
+		if ((result=read(fd, &(outp[*outp_len-BASIC_STRLEN]), BASIC_STRLEN))<0)
+			return -1;
+		if (result<BASIC_STRLEN){
+			exceed=0;
+			break;
+		}
+		if (result==BASIC_STRLEN&&outp[*outp_len]=='\0'){
+			exceed=0;
+			break;
+		}
+		buf_len = *outp_len+BASIC_STRLEN;
+		outp = strrealloc(outp, &buf_len);
+		if (buf_len!=*outp_len + BASIC_STRLEN){
+			flush(fd);
+			return 0;
+		}
+	}
+	if (exceed==1){
+		flush(fd);
+		return -1;
+	}
+        return 0;
 }
 
 int bashInit(){
@@ -78,7 +111,7 @@ int bashInit(){
 		dup2(slave_fd, STDIN_FILENO);
 		dup2(slave_fd, STDOUT_FILENO);
 		dup2(slave_fd, STDERR_FILENO);
-		execl(BASH_PATH, BASH_PATH, (char*)0);
+		execl(BASH_PATH, BASH_PATH, BASH_PARAMS, (char*)0);
 	}
 	if (pid == 0)
 		return fd;

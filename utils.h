@@ -12,6 +12,8 @@
 #include <fcntl.h>
 
 #define BASH_PATH "/bin/bash"
+#define BASH_PARAMS "-s -v"
+#define MAX_STRLEN 65536
 
 int getCommand(char*);
 
@@ -21,6 +23,8 @@ char* strrealloc(char*, int*);
 
 void daemonize();
 
-char* Bash(char*, char*);
+int flush(int);
+
+int Bash(int, char*, char*, int*);
 
 int bashInit();

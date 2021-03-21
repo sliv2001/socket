@@ -13,6 +13,6 @@ int receive();
 
 int Print(char*);
 
-int processing(char* inp, char* outp);
+int processing(char*, char*, int*);
 
 int sendMessage(char* inp);

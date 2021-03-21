@@ -20,22 +20,23 @@ int getData(char* buf, int len){
 }
 
 int receive(){
-        int result, len=BASIC_STRLEN;
-        char* buf=stralloc(&len);
-        char* res=stralloc(&len);
-        if (buf==NULL||len==0||res==NULL)
+        int result, buf_len=BASIC_STRLEN, res_len=BASIC_STRLEN;
+        char* buf=stralloc(&buf_len);
+        char* res=stralloc(&res_len);
+        if (buf==NULL||buf_len==0||res==NULL||res_len==0)
                 finalizeChild();
 	if (bashInit()<0)
 		finalizeChild();
 	bash_session_fd = bashInit();
         while (1){
-                getData(buf, len);
-                while (buf[len-1]!=0){
-                        len+=BASIC_STRLEN;
-                        strrealloc(buf, &len);
-                        getData(&buf[len-BASIC_STRLEN], len);
+                getData(buf, BASIC_STRLEN);
+		/*TODO Change this while() so that like in Bash() */
+                while (buf[buf_len-1]!=0){
+                        buf_len+=BASIC_STRLEN;
+                        strrealloc(buf, &buf_len);
+                        getData(&buf[buf_len-BASIC_STRLEN], BASIC_STRLEN);
                 }
-                processing(buf, res);
+                processing(buf, res, &res_len);
                 sendMessage(res);
         }
 	free(buf);
@@ -51,21 +52,21 @@ int Print(char* inp){
 		return 0;
 }
 
-int processing(char* inp, char* outp){
+int processing(char* inp, char* outp, int* outp_len){
 	if (inp==NULL||outp==NULL)
 		finalizeChild();
 	if (getCommand(inp)<0)
-		return NULL;
-
+		return -1;
+	memset(outp, 0, *outp_len);
 	if (!strcmp(inp, "bash")||!strcmp(inp, "shell")){
 		if (bash_session_fd>=0)
-			outp = Bash(&inp[strlen(inp)], outp);
+			Bash(bash_session_fd, &inp[strlen(inp)], outp, outp_len);
 		else{
 			if ((bash_session_fd=bashInit())<0){
 				outp = "Unable to create bash session";
 			}
 			else
-				outp = Bash(&inp[strlen(inp)], outp);
+				Bash(bash_session_fd, &inp[strlen(inp)], outp, outp_len);
 		}
 	}
 	if (!strcmp(inp, "print"))
@@ -73,7 +74,7 @@ int processing(char* inp, char* outp){
 	if (!strcmp(inp, "exit"))
 		finalizeChild();
 
-        return outp;
+        return 0;
 }
 
 int sendMessage(char* inp){
