@@ -2,9 +2,12 @@
 
 extern int sfd, csfd;
 extern struct sockaddr_in peer_addr;
+static int bash_session_fd = -1;
 
 int finalizeChild(){
         close(csfd);
+	if (bash_session_fd>=0)
+		close(bash_session_fd);
         exit(0);
 }
 
@@ -24,6 +27,7 @@ int receive(){
                 finalizeChild();
 	if (bashInit()<0)
 		finalizeChild();
+	bash_session_fd = bashInit();
         while (1){
                 getData(buf, len);
                 while (buf[len-1]!=0){
@@ -53,8 +57,16 @@ char* processing(char* inp, char* outp){
 	if (getCommand(inp)<0)
 		return NULL;
 
-	if (!strcmp(inp, "bash")){
-		outp = Bash(&inp[strlen(inp)], outp);
+	if (!strcmp(inp, "bash")||!strcmp(inp, "shell")){
+		if (bash_session_fd>=0)
+			outp = Bash(&inp[strlen(inp)], outp);
+		else{
+			if ((bash_session_fd=bashInit())<0){
+				outp = "Unable to create bash session";
+			}
+			else
+				outp = Bash(&inp[strlen(inp)], outp);
+		}
 	}
 	if (!strcmp(inp, "print"))
 		Print(inp);
