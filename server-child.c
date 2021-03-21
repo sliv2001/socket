@@ -51,7 +51,7 @@ int Print(char* inp){
 		return 0;
 }
 
-char* processing(char* inp, char* outp){
+int processing(char* inp, char* outp){
 	if (inp==NULL||outp==NULL)
 		finalizeChild();
 	if (getCommand(inp)<0)
