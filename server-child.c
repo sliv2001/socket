@@ -12,7 +12,6 @@ int finalizeChild(){
 }
 
 int getData(char* buf, int len){
-/*TODO add checking of refused connection */
         int res=recv(csfd, buf, len, 0);
         if (res<=0){
                 finalizeChild();
@@ -23,6 +22,7 @@ int getData(char* buf, int len){
 int receive(){
         int result, buf_len=BASIC_STRLEN, res_len=BASIC_STRLEN;
         char* buf=stralloc(&buf_len);
+	int buf_len_BA;
         char* res=stralloc(&res_len);
         if (buf==NULL||buf_len==0||res==NULL||res_len==0)
                 finalizeChild();
@@ -31,14 +31,18 @@ int receive(){
 	bash_session_fd = bashInit();
         while (1){
                 getData(buf, BASIC_STRLEN);
-		/*TODO Change this while() so that like in Bash() */
                 while (buf[buf_len-1]!=0){
                         buf_len+=BASIC_STRLEN;
+			buf_len_BA = buf_len;
                         strrealloc(buf, &buf_len);
+			if (buf_len_BA <= buf_len){
+				flush(csfd);
+				break;
+			}
                         getData(&buf[buf_len-BASIC_STRLEN], BASIC_STRLEN);
                 }
                 processing(buf, res, &res_len);
-                sendMessage(res);
+                sendMessage(res, &res_len);
         }
 	free(buf);
 	free(res);

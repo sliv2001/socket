@@ -1,6 +1,8 @@
 #include "server.h"
 #include "utils.h"
 #include "server-child.h"
+#define LOG_PATH "./log.txt"
+#include "logger.h"
 
 int 		sfd, csfd=-1;
 struct sockaddr_in peer_addr;
