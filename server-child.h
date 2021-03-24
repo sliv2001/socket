@@ -15,4 +15,4 @@ int Print(char*);
 
 int processing(char*, char*, int*);
 
-int sendMessage(char* inp);
+int sendMessage(char*, int*);

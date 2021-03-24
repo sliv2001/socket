@@ -12,6 +12,7 @@ int finalizeChild(){
 }
 
 int getData(char* buf, int len){
+/*TODO add checking of refused connection */
         int res=recv(csfd, buf, len, 0);
         if (res<=0){
                 finalizeChild();
@@ -77,6 +78,9 @@ int processing(char* inp, char* outp, int* outp_len){
         return 0;
 }
 
-int sendMessage(char* inp){
+int sendMessage(char* inp, int* inp_len){
+	if (send(csfd, inp, (size_t)*inp_len, MSG_NOSIGNAL)<0){
+		finalizeChild();
+	}
 	return 0;
 }
