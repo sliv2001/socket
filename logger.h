@@ -44,6 +44,13 @@ int log_init(char* path){
 		return -1;
 }
 
+int log_init(int fd){
+	if (fd<0)
+		return -1;
+	log_fd = fd;
+	return 0;
+}
+
 /*date pid file-line log-level*/
 int pr_log_level(int level, char* fmt, ...){
 	char strlevel[5];
