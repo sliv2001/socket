@@ -53,7 +53,7 @@ int getCommand(char* inp){
 }
 
 int flush(int fd){
-	
+	/*TODO stop here*/
 	return 0;
 }
 

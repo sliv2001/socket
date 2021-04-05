@@ -71,6 +71,7 @@ void finalize(int res, char* str){
 		err(res, "%s", str);
 }
 
+/* TODO Добавить парсер */
 int main(int argc, char** argv){
 	initialize();
 #ifdef DAEMON

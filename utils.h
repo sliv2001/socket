@@ -28,3 +28,9 @@ int flush(int);
 int Bash(int, char*, char*, int*);
 
 int bashInit();
+
+/* Uppercase-independent parser */
+/*
+int parse(int, char**, const char*);
+int parse(int, char**, const char*, char*);
+*/
