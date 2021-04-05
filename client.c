@@ -45,7 +45,7 @@ int sendData(char* buf){
 	return 0;
 }
 
-int getData(char* buf, int len){
+int GetData(char* buf, int len){
         int res=recv(sfd, buf, len, 0);
         if (res<=0){
                 pr_err("couldnot get data responce from socket");
@@ -54,23 +54,24 @@ int getData(char* buf, int len){
         return res;
 }
 
-int receive(char* buf, int buf_len){
+int Receive(char* buf, int* buf_len){
 	int buf_len_BA;
-	if (getData(buf, BASIC_STRLEN)<0)
+	if (GetData(buf, BASIC_STRLEN)<0)
 		return -1;
         while (buf[*buf_len-1]!=0){
                 *buf_len+=BASIC_STRLEN;
                 buf_len_BA = *buf_len;
-                strrealloc(buf, *buf_len);
+                strrealloc(buf, buf_len);
                 if (buf_len_BA <= *buf_len){
 			flush(sfd);
                         break;
                 }
-                if (getData(&buf[*buf_len-BASIC_STRLEN], BASIC_STRLEN)<0)
+                if (GetData(&buf[*buf_len-BASIC_STRLEN], BASIC_STRLEN)<0)
 			return -1;
         }
 }
 
+/*TODO сделать универсальный метод чтения и записи в utils */
 /*TODO сделать отправляемую строку переменного размера */
 int main(int argc, char** argv){
 	char buf[BUFSZ];
@@ -93,8 +94,8 @@ int main(int argc, char** argv){
 				break;
 			}
 		sendData(buf);
-		receive(rec, len);
-		printf("%s", res);
+		Receive(rec, &len);
+		printf("%s", rec);
 	}
 	return 0;
 }

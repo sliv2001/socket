@@ -20,4 +20,4 @@ int sendData(char*);
 
 int getData(char*, int);
 
-int receive(char*, int);
+int receive(char*, int*);
