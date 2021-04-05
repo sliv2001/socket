@@ -1,3 +1,5 @@
+#pragma once
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -11,6 +13,11 @@
 
 #define PORT 32001
 #define BASIC_STRLEN 128
+
 int establish_TCP(const char*);
 
 int sendData(char*);
+
+int getData(char*, int);
+
+int receive(char*, int);

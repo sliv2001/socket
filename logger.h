@@ -31,6 +31,9 @@ enum {
 	LOG_INFO,
 };
 
+int log_init(char*);
+int log_init_fd(int);
+
 int log_init(char* path){
 	#ifndef LOG_PATH
 	#error Temporary error: LOG_PATH undef
@@ -44,7 +47,7 @@ int log_init(char* path){
 		return -1;
 }
 
-int log_init(int fd){
+int log_init_fd(int fd){
 	if (fd<0)
 		return -1;
 	log_fd = fd;
