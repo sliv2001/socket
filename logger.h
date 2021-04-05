@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <time.h>
+#include <errno.h>
 
 #define pr_err(fmt, ...) \
 pr_log_level(LOG_ERR, "%s: %d" fmt, __FILE__, __LINE__, \
@@ -50,12 +51,14 @@ int pr_log_level(int level, char* fmt, ...){
 	time_t t = time(NULL);
 	if (log_fd==-1)
 		log_init(NULL);
-	if (level==0) sprintf(strlevel, "%s", "err\0");
-	if (level==1) sprintf(strlevel, "%s", "warn\0");
-	if (level==2) sprintf(strlevel, "%s", "info\0");
+	if (level==0) sprintf(strlevel, "%s", "err");
+	if (level==1) sprintf(strlevel, "%s", "warn");
+	if (level==2) sprintf(strlevel, "%s", "info");
 	snprintf(buf, BUFSZ, "%s %d %s", ctime(&t), 
 		getpid(), strlevel);
 	vsnprintf(buf+strlen(buf), BUFSZ-strlen(buf), fmt, params);
+	if (level==0)
+		snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "%s", strerror(errno));
 	if (write(log_fd, buf, strlen(buf))<0)
 		return -1;
 	return 0;
