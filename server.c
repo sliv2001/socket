@@ -12,12 +12,12 @@ int setup_socket(){
 	int res;
 	struct sockaddr_in addr;
 	struct in_addr internet_adress;
-	int socket_d;
+	int socket_d=-1;
 	if (tcp){
-		socket_d = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		socket_d = socket(AF_INET, SOCK_STREAM, 0);
 	}
 	else {
-		socket_d = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+		socket_d = socket(AF_INET, SOCK_DGRAM, 0);
 	}
 	sfd = socket_d; /* socket_d оставлен для легаси */
 	if (socket_d<0)
@@ -26,9 +26,9 @@ int setup_socket(){
 	memset(&addr, 0, sizeof(addr));
 	memset(&internet_adress, 0, sizeof(internet_adress));
 	addr.sin_family = AF_INET;
-	internet_adress.s_addr = INADDR_ANY;
+	internet_adress.s_addr = htonl(INADDR_ANY);
 	addr.sin_addr = internet_adress;
-	addr.sin_port = PORT;
+	addr.sin_port = htons(PORT);
 	res = bind(socket_d, (struct sockaddr*)&addr, sizeof(addr));
 	if (res<0)
 		finalize(res, "Could not bind socket");
@@ -92,15 +92,16 @@ void finalize(int res, char* str){
 }
 
 int main(int argc, char** argv){
+	log_init_fd(STDOUT_FILENO);
 	if (argc<2){
-		pr_err("Not enough args: only %d", argc-1);
+		pr_err("Not enough args: only %d", argc);
 		return -1;
 	}
 	initialize(argc, argv);
 #ifdef DAEMON
 	daemonize();
 #endif
-	sfd = setup_socket();
+	setup_socket();
 	connect_to_Socket();
 	return 0;
 }
