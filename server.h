@@ -18,6 +18,6 @@ int	setup_socket();
 
 int	connect_to_Socket();
 
-int	initialize();
+int	initialize(int, char**);
 
 void	finalize(int, char*);

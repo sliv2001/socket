@@ -19,7 +19,7 @@ int getData(char* buf, int len){
         return res;
 }
 
-int receive(){
+int receive(int tcp){
         int result, buf_len=BASIC_STRLEN, res_len=BASIC_STRLEN;
         char* buf=stralloc(&buf_len);
 	int buf_len_BA;

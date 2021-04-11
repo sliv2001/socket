@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <string.h>
+#include <strings.h>
 #include <fcntl.h>
 
 #define BASH_PATH "/bin/bash"
@@ -28,6 +29,8 @@ int flush(int);
 int Bash(int, char*, char*, int*);
 
 int bashInit();
+
+int contains(int, char**, const char*);
 
 /* Uppercase-independent parser */
 /*

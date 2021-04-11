@@ -53,7 +53,6 @@ int getCommand(char* inp){
 }
 
 int flush(int fd){
-	/*TODO stop here*/
 	return 0;
 }
 
@@ -115,5 +114,14 @@ int bashInit(){
 	}
 	if (pid == 0)
 		return fd;
+	return 0;
+}
+
+int contains(int argc, char** argv, const char* val){
+	int i;
+	for (i=1; i<argc; i++){
+		if (!strcasecmp(val, argv[i]))
+			return i;
+	}
 	return 0;
 }

@@ -14,7 +14,7 @@
 #define PORT 32001
 #define BASIC_STRLEN 128
 
-int establish_TCP(const char*);
+int establish(const char*);
 
 int sendData(char*);
 
