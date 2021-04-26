@@ -26,9 +26,8 @@ int receive(int tcp){
         char* res=stralloc(&res_len);
         if (buf==NULL||buf_len==0||res==NULL||res_len==0)
                 finalizeChild();
-	if (bashInit()<0)
+	if ((bash_session_fd = bashInit())<0)
 		finalizeChild();
-	bash_session_fd = bashInit();
         while (1){
                 getData(buf, BASIC_STRLEN);
                 while (buf[buf_len-1]!=0){
@@ -49,9 +48,9 @@ int receive(int tcp){
         return 0;
 }
 
-int Print(char* inp){
-	char* data = &inp[strlen(inp)];
-	if (printf("%s", data)<0)
+int Print(char* inp, char* outp){
+	char* data = inp+strlen(inp)+1;
+	if (sprintf(outp, "%s", data)<0)
 		return -1;
 	else
 		return 0;
@@ -75,7 +74,7 @@ int processing(char* inp, char* outp, int* outp_len){
 		}
 	}
 	if (!strcmp(inp, "print"))
-		Print(inp);
+		Print(inp, outp);
 	if (!strcmp(inp, "exit"))
 		finalizeChild();
 

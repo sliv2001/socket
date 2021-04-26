@@ -8,6 +8,10 @@ int 		sfd, csfd=-1;
 struct sockaddr_in peer_addr;
 int	tcp=0, udp=0;
 
+static void sig_int(int signo){
+	finalize(0, "\n");
+}
+
 int setup_socket(){
 	int res;
 	struct sockaddr_in addr;
@@ -81,12 +85,13 @@ int initialize(int argc, char** argv){
 }
 
 void finalize(int res, char* str){
-	if (res<=0)
-		close(sfd);
+	close(sfd);
 	close(csfd);
 
-	if (res==0)
+	if (res==0){
+		printf("\n");
 		exit(0);
+	}
 	else
 		err(res, "%s", str);
 }
@@ -100,6 +105,9 @@ int main(int argc, char** argv){
 	initialize(argc, argv);
 #ifdef DAEMON
 	daemonize();
+#else
+	if (signal(SIGINT, sig_int)== SIG_ERR||signal(SIGTERM, sig_int)==SIG_ERR)
+		pr_warn("Couldnot intercept SIGINT");
 #endif
 	setup_socket();
 	connect_to_Socket();

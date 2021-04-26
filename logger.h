@@ -56,16 +56,16 @@ int log_init_fd(int fd){
 
 /*date pid file-line log-level*/
 int pr_log_level(int level, char* fmt, ...){
-	char strlevel[5];
+	char strlevel[6];
 	char date[128];
 	va_list params;
 	char* i;
 	time_t t = time(NULL);
 	if (log_fd==-1)
 		log_init(NULL);
-	if (level==0) sprintf(strlevel, "%s", "err");
-	if (level==1) sprintf(strlevel, "%s", "warn");
-	if (level==2) sprintf(strlevel, "%s", "info");
+	if (level==0) sprintf(strlevel, "%s ", "err");
+	if (level==1) sprintf(strlevel, "%s ", "warn");
+	if (level==2) sprintf(strlevel, "%s ", "info");
 	strcpy(date, ctime(&t));
 	if ((i=strstr(date, "\n"))>=0)
 		*i = 0;

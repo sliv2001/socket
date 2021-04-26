@@ -11,7 +11,7 @@ int getData(char* buf, int len);
 
 int receive();
 
-int Print(char*);
+int Print(char*, char*);
 
 int processing(char*, char*, int*);
 

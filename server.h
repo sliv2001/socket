@@ -8,6 +8,7 @@
 #include <netinet/ip.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #define	SOCKET_PATH	"/tmp/s_connect"
 #define	PORT		32001

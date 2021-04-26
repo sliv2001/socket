@@ -36,7 +36,8 @@ int establish(const char* str_addr){
 
 int sendData(char* buf){
 	int i, n;
-	if (send(sfd, buf, strlen(buf), 0)<0){
+	int len = strlen(buf);
+	if (send(sfd, buf, len, MSG_NOSIGNAL)<0){
 		pr_err("Couldnot send data");
 		return -1;
 	}
@@ -46,7 +47,7 @@ int sendData(char* buf){
 int GetData(char* buf, int len){
         int res=recv(sfd, buf, len, 0);
         if (res<=0){
-                pr_err("couldnot get data responce from socket");
+	        pr_err("couldnot get data responce from socket");
 		return -1;
         }
         return res;
@@ -70,8 +71,8 @@ int Receive(char* buf, int* buf_len){
 }
 
 int main(int argc, char** argv){
-	char buf[BUFSZ];
 	int len = BUFSZ;
+	char buf[BUFSZ];
 	char* rec = stralloc(&len);
 	int i;
 	if (log_init_fd(STDERR_FILENO)<0)
@@ -80,12 +81,13 @@ int main(int argc, char** argv){
 		pr_err("Wrong args");
 	if (contains(argc, argv, "--tcp"))
 		tcp = 1;
-	if (contains(argc, argv, "--udp")&&tcp!=1)
-		udp=1;
-	else{
-		pr_err("Unset --tcp or --udp or both are set");
-		return -1;
-	}
+	if (contains(argc, argv, "--udp"))
+		tcp=0;
+	else
+		if (tcp!=1){
+			pr_err("Unset --tcp or --udp or both are set");
+			return -1;
+		}
 	establish(argv[argc-1]);
 	while (1){
 		if (read(STDIN_FILENO, &buf, BUFSZ)<0){

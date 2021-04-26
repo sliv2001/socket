@@ -46,7 +46,7 @@ int getCommand(char* inp){
 	for (i; i<strlen(inp); i++){
 		if (isspace(inp[i])){
 			inp[i]=0;
-			exit(0);
+			return 0;
 		}
 	}
 	return -1;
@@ -106,13 +106,13 @@ int bashInit(){
 		return -1;
 	if ((pid = fork())<0)
 		return -1;
-	if (pid>0){
+	if (pid==0){
 		dup2(slave_fd, STDIN_FILENO);
 		dup2(slave_fd, STDOUT_FILENO);
 		dup2(slave_fd, STDERR_FILENO);
 		execl(BASH_PATH, BASH_PATH, BASH_PARAMS, (char*)0);
 	}
-	if (pid == 0)
+	if (pid > 0)
 		return fd;
 	return 0;
 }
