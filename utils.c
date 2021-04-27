@@ -1,6 +1,5 @@
 #include "utils.h"
 #include "server.h"
-#include <stdio.h>
 
 /*TODO Set up appropriate logging*/
 
@@ -57,20 +56,15 @@ int flush(int fd){
 	return 0;
 }
 
-int Bash(int fd, char* inp, char* outp, int* outp_len){
+char* tryReadFrom(int fd, char* outp, int* outp_len){
 	int exceed=1, result;
 	int buf_len;
-	if (inp[strlen(inp)-1]!='\n'){
-		inp[strlen(inp)]='\n';
-		inp[strlen(inp)+1]='\0';
-	}
-	else
-		inp[strlen(inp)]=0;
-	if (write(fd, inp, strlen(inp))<0)
-		return -1;
+
+	if ((result=read(fd, outp, BASIC_STRLEN))<0)
+		return NULL;
 	for (*outp_len; *outp_len<=MAX_STRLEN; *outp_len+=BASIC_STRLEN){
 		if ((result=read(fd, &(outp[*outp_len-BASIC_STRLEN]), BASIC_STRLEN))<0)
-			return -1;
+			return NULL;
 		if (result<BASIC_STRLEN){
 			exceed=0;
 			break;
@@ -83,15 +77,30 @@ int Bash(int fd, char* inp, char* outp, int* outp_len){
 		outp = strrealloc(outp, &buf_len);
 		if (buf_len!=*outp_len + BASIC_STRLEN){
 			flush(fd);
-			return 0;
+			return outp;
 		}
 	}
-	if ((result=read(fd, outp, MAX_STRLEN))<0)
-		return -1;
 	if (exceed==1){
 		flush(fd);
+		return NULL;
+	}
+
+	return outp;
+}
+
+int Bash(int fd, char* inp, char* outp, int* outp_len){
+	tryReadFrom(fd, outp, outp_len);
+	if (inp[strlen(inp)-1]!='\n'){
+		inp[strlen(inp)]='\n';
+		inp[strlen(inp)+1]='\0';
+	}
+	else
+		inp[strlen(inp)]=0;
+	if ((outp = tryReadFrom(fd, outp, outp_len))==NULL){
 		return -1;
 	}
+	if (write(fd, inp, strlen(inp))<0)
+		return -1;
         return 0;
 }
 

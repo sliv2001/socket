@@ -106,7 +106,7 @@ int main(int argc, char** argv){
 			}
 		sendData(buf);
 		Receive(rec, &len);
-		printf("%s", rec);
+		write(STDOUT_FILENO, &rec, strlen(rec));
 	}
 	return 0;
 }
