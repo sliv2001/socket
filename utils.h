@@ -13,7 +13,7 @@
 #include <fcntl.h>
 
 #define BASH_PATH "/bin/bash"
-#define BASH_PARAMS "-s -v"
+#define BASH_PARAMS "-s"
 #define MAX_STRLEN 65536
 
 int getCommand(char*);

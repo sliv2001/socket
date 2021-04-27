@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "server.h"
+#include <stdio.h>
 
 /*TODO Set up appropriate logging*/
 
@@ -59,8 +60,12 @@ int flush(int fd){
 int Bash(int fd, char* inp, char* outp, int* outp_len){
 	int exceed=1, result;
 	int buf_len;
-	inp[strlen(inp)]='\n';
-	inp[strlen(inp)+1]='\0';
+	if (inp[strlen(inp)-1]!='\n'){
+		inp[strlen(inp)]='\n';
+		inp[strlen(inp)+1]='\0';
+	}
+	else
+		inp[strlen(inp)]=0;
 	if (write(fd, inp, strlen(inp))<0)
 		return -1;
 	for (*outp_len; *outp_len<=MAX_STRLEN; *outp_len+=BASIC_STRLEN){
@@ -81,6 +86,8 @@ int Bash(int fd, char* inp, char* outp, int* outp_len){
 			return 0;
 		}
 	}
+	if ((result=read(fd, outp, MAX_STRLEN))<0)
+		return -1;
 	if (exceed==1){
 		flush(fd);
 		return -1;
@@ -110,7 +117,7 @@ int bashInit(){
 		dup2(slave_fd, STDIN_FILENO);
 		dup2(slave_fd, STDOUT_FILENO);
 		dup2(slave_fd, STDERR_FILENO);
-		execl(BASH_PATH, BASH_PATH, BASH_PARAMS, (char*)0);
+		execl(BASH_PATH, BASH_PATH, (char*)0);
 	}
 	if (pid > 0)
 		return fd;

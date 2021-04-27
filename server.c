@@ -7,6 +7,7 @@
 int 		sfd, csfd=-1;
 struct sockaddr_in peer_addr;
 int	tcp=0, udp=0;
+static int Port = PORT;
 
 static void sig_int(int signo){
 	finalize(0, "\n");
@@ -32,11 +33,13 @@ int setup_socket(){
 	addr.sin_family = AF_INET;
 	internet_adress.s_addr = htonl(INADDR_ANY);
 	addr.sin_addr = internet_adress;
-	addr.sin_port = htons(PORT);
+	addr.sin_port = htons(Port);
 	res = bind(socket_d, (struct sockaddr*)&addr, sizeof(addr));
-	if (res<0)
-		finalize(res, "Could not bind socket");
-
+	if (res<0){
+		pr_err("Could not bind socket");
+		close(sfd);
+		exit(-1);
+	}
 	if (tcp){
 		res = listen(socket_d, PEER_MAX);
 		if (res<0)
@@ -72,6 +75,11 @@ int connect_to_Socket(){
 }
 
 int initialize(int argc, char** argv){
+	int place;
+	int port;
+	if ((place=contains(argc, argv, "-p"))>-1)
+		if (sscanf(argv[place+1], "%d", &port)>0)
+			Port = port;
 	if (contains(argc, argv, "--tcp")){
 		tcp=1;
 		return 0;

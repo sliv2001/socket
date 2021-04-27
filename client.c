@@ -2,6 +2,7 @@
 
 int sfd = -1;
 int tcp = 0;
+static int Port = PORT;
 
 int establish(const char* str_addr){
 	struct sockaddr_in addr;
@@ -18,7 +19,7 @@ int establish(const char* str_addr){
 	}
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(PORT);
+	addr.sin_port = htons(Port);
 	a.s_addr = inet_addr(str_addr);
 	if (a.s_addr==INADDR_NONE){
 		pr_err("Wrong IP address: %s", str_addr);
@@ -71,6 +72,7 @@ int Receive(char* buf, int* buf_len){
 }
 
 int main(int argc, char** argv){
+	int port;
 	int len = BUFSZ;
 	char buf[BUFSZ];
 	char* rec = stralloc(&len);
@@ -79,6 +81,9 @@ int main(int argc, char** argv){
 		return -1;
 	if (argc<3)
 		pr_err("Wrong args");
+	if ((i=contains(argc, argv, "-p"))>0)
+		if (sscanf(argv[i+1], "%d", &port)>0)
+			Port = port;
 	if (contains(argc, argv, "--tcp"))
 		tcp = 1;
 	if (contains(argc, argv, "--udp"))
