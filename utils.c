@@ -56,51 +56,29 @@ int flush(int fd){
 	return 0;
 }
 
-char* tryReadFrom(int fd, char* outp, int* outp_len){
-	int exceed=1, result;
-	int buf_len;
-
-	if ((result=read(fd, outp, BASIC_STRLEN))<0)
-		return NULL;
-	for (*outp_len; *outp_len<=MAX_STRLEN; *outp_len+=BASIC_STRLEN){
-		if ((result=read(fd, &(outp[*outp_len-BASIC_STRLEN]), BASIC_STRLEN))<0)
-			return NULL;
-		if (result<BASIC_STRLEN){
-			exceed=0;
-			break;
-		}
-		if (result==BASIC_STRLEN&&outp[*outp_len]=='\0'){
-			exceed=0;
-			break;
-		}
-		buf_len = *outp_len+BASIC_STRLEN;
-		outp = strrealloc(outp, &buf_len);
-		if (buf_len!=*outp_len + BASIC_STRLEN){
-			flush(fd);
-			return outp;
-		}
-	}
-	if (exceed==1){
-		flush(fd);
-		return NULL;
-	}
-
-	return outp;
+int tryReadFrom(int fd, char* outp, int outp_len){
+	#ifndef BASIC_STRLEN
+		#define BASIC_STRLEN 65536
+		#warning Had to redefine BASIC_STRLEN
+	#endif
+	if (read(fd, outp, BASIC_STRLEN)<0)
+		return -1;
+	return 0;
 }
 
 int Bash(int fd, char* inp, char* outp, int* outp_len){
-	tryReadFrom(fd, outp, outp_len);
 	if (inp[strlen(inp)-1]!='\n'){
 		inp[strlen(inp)]='\n';
 		inp[strlen(inp)+1]='\0';
 	}
 	else
 		inp[strlen(inp)]=0;
-	if ((outp = tryReadFrom(fd, outp, outp_len))==NULL){
-		return -1;
-	}
 	if (write(fd, inp, strlen(inp))<0)
 		return -1;
+	if (tryReadFrom(fd, outp, *outp_len)<0){
+		return -1;
+	}
+
         return 0;
 }
 
