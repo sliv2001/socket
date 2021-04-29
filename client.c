@@ -35,12 +35,14 @@ int establish(const char* str_addr){
 	return 0;
 }
 
-int sendData(char* buf){
+int sendData(char* buf, char* str_addr){
 	int i, n;
 	int len = strlen(buf);
-	if (send(sfd, buf, len, MSG_NOSIGNAL)<0){
-		pr_err("Couldnot send data");
-		return -1;
+	if (tcp){
+		if (send(sfd, buf, len, MSG_NOSIGNAL)<0){
+			pr_err("Couldnot send data");
+			return -1;
+		}
 	}
 	return 0;
 }
