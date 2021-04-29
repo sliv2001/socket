@@ -61,17 +61,18 @@ int tryReadFrom(int fd, char* outp, int outp_len){
 		#define BASIC_STRLEN 65536
 		#warning Had to redefine BASIC_STRLEN
 	#endif
-	if (read(fd, outp, BASIC_STRLEN)<0)
+	if (read(fd, outp, outp_len)<0)
 		return -1;
 	return 0;
 }
 
 int Bash(int fd, char* inp, char* outp, int outp_len){
 	struct pollfd p;
+	int pres, length;
 	p.fd = fd;
-	p.events = POLLOUT;
-	if (poll(&p, 1, 100000)<0)
-		return -1;
+	p.events = POLLIN;
+	if (poll(&p, 1, 2000)>0)
+		tryReadFrom(fd, outp, outp_len);
 	if (inp[strlen(inp)-1]!='\n'){
 		inp[strlen(inp)]='\n';
 		inp[strlen(inp)+1]='\0';
@@ -80,10 +81,14 @@ int Bash(int fd, char* inp, char* outp, int outp_len){
 		inp[strlen(inp)]=0;
 	if (write(fd, inp, strlen(inp))<0)
 		return -1;
-	if (poll(&p, 1, 100000)<0)
-		return -1;
-	if (tryReadFrom(fd, outp, outp_len)<0){
-		return -1;
+	tryReadFrom(fd, outp, strlen(inp)+3);
+	length = 0;
+	while ((pres = poll(&p, 1, 2000))>0&&length<BASIC_STRLEN){
+		if (tryReadFrom(fd, outp+length, outp_len)<0){
+			return -1;
+		}
+		length = strlen(outp);
+
 	}
         return 0;
 }

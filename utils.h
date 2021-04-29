@@ -1,6 +1,6 @@
 #pragma once
 
-#define _XOPEN_SOURCE 500
+#define _XOPEN_SOURCE 600
 
 #include <stdlib.h>
 #include <err.h>
@@ -12,6 +12,7 @@
 #include <strings.h>
 #include <fcntl.h>
 #include <poll.h>
+#include <wait.h>
 
 #define BASH_PATH "/bin/bash"
 #define BASH_PARAMS "-s"
