@@ -47,20 +47,21 @@ int Print(char* inp, char* outp){
 }
 
 int processing(char* inp, char* outp, int* outp_len){
+	int com_len;
 	if (inp==NULL||outp==NULL)
 		finalizeChild();
-	if (getCommand(inp)<0)
+	if ((com_len = getCommand(inp))<0)
 		return -1;
 	memset(outp, 0, *outp_len);
 	if (!strcmp(inp, "bash")||!strcmp(inp, "shell")){
 		if (bash_session_fd>=0)
-			Bash(bash_session_fd, &inp[strlen(inp)+1], outp, outp_len);
+			Bash(bash_session_fd, inp+com_len+1, outp, *outp_len);
 		else{
 			if ((bash_session_fd=bashInit())<0){
 				outp = "Unable to create bash session";
 			}
 			else
-				Bash(bash_session_fd, &inp[strlen(inp)], outp, outp_len);
+				Bash(bash_session_fd, &inp[strlen(inp)], outp, *outp_len);
 		}
 	}
 	if (!strcmp(inp, "print"))

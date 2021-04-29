@@ -100,7 +100,7 @@ int main(int argc, char** argv){
 			close(sfd);
 			return 0;
 		}
-		write(STDOUT_FILENO, &rec, strlen(rec));
+		write(STDOUT_FILENO, rec, BASIC_STRLEN);
 	}
 	return 0;
 }

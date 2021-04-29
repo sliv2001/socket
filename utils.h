@@ -11,6 +11,7 @@
 #include <string.h>
 #include <strings.h>
 #include <fcntl.h>
+#include <poll.h>
 
 #define BASH_PATH "/bin/bash"
 #define BASH_PARAMS "-s"
@@ -26,7 +27,7 @@ void daemonize();
 
 int flush(int);
 
-int Bash(int, char*, char*, int*);
+int Bash(int, char*, char*, int);
 
 int bashInit();
 

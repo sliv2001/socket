@@ -12,7 +12,7 @@
 #include "logger.h"
 
 #define PORT 32001
-#define BASIC_STRLEN 128
+#define BASIC_STRLEN 65536
 
 int establish(const char*);
 

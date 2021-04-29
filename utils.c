@@ -46,7 +46,7 @@ int getCommand(char* inp){
 	for (i; i<strlen(inp); i++){
 		if (isspace(inp[i])){
 			inp[i]=0;
-			return 0;
+			return i;
 		}
 	}
 	return -1;
@@ -66,7 +66,12 @@ int tryReadFrom(int fd, char* outp, int outp_len){
 	return 0;
 }
 
-int Bash(int fd, char* inp, char* outp, int* outp_len){
+int Bash(int fd, char* inp, char* outp, int outp_len){
+	struct pollfd p;
+	p.fd = fd;
+	p.events = POLLOUT;
+	if (poll(&p, 1, 100000)<0)
+		return -1;
 	if (inp[strlen(inp)-1]!='\n'){
 		inp[strlen(inp)]='\n';
 		inp[strlen(inp)+1]='\0';
@@ -75,16 +80,17 @@ int Bash(int fd, char* inp, char* outp, int* outp_len){
 		inp[strlen(inp)]=0;
 	if (write(fd, inp, strlen(inp))<0)
 		return -1;
-	if (tryReadFrom(fd, outp, *outp_len)<0){
+	if (poll(&p, 1, 100000)<0)
+		return -1;
+	if (tryReadFrom(fd, outp, outp_len)<0){
 		return -1;
 	}
-
         return 0;
 }
 
 int bashInit(){
 	char* slave_path;
-	int fd = open("/dev/ptmx", O_RDWR|O_NOCTTY);
+	int fd = posix_openpt(O_RDWR|O_NOCTTY);
 	int slave_fd;
 	pid_t pid;
 	if (fd<0)
