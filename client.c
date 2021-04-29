@@ -58,17 +58,7 @@ int Receive(char* buf, int* buf_len){
 	int buf_len_BA;
 	if (GetData(buf, BASIC_STRLEN)<0)
 		return -1;
-        while (buf[*buf_len-1]!=0){
-                *buf_len+=BASIC_STRLEN;
-                buf_len_BA = *buf_len;
-                strrealloc(buf, buf_len);
-                if (buf_len_BA <= *buf_len){
-			flush(sfd);
-                        break;
-                }
-                if (GetData(&buf[*buf_len-BASIC_STRLEN], BASIC_STRLEN)<0)
-			return -1;
-        }
+	return 0;
 }
 
 int main(int argc, char** argv){
@@ -106,6 +96,10 @@ int main(int argc, char** argv){
 			}
 		sendData(buf);
 		Receive(rec, &len);
+		if (!strcasecmp(buf, "exit")){
+			close(sfd);
+			return 0;
+		}
 		write(STDOUT_FILENO, &rec, strlen(rec));
 	}
 	return 0;

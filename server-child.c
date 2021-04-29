@@ -30,16 +30,6 @@ int receive(int tcp){
 		finalizeChild();
         while (1){
                 getData(buf, BASIC_STRLEN);
-                while (buf[buf_len-1]!=0){
-                        buf_len+=BASIC_STRLEN;
-			buf_len_BA = buf_len;
-                        strrealloc(buf, &buf_len);
-			if (buf_len_BA <= buf_len){
-				flush(csfd);
-				break;
-			}
-                        getData(&buf[buf_len-BASIC_STRLEN], BASIC_STRLEN);
-                }
                 processing(buf, res, &res_len);
                 sendMessage(res, &res_len);
         }
